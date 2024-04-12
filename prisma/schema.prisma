@@ -1,0 +1,243 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Balance {
+  id                   String   @id @unique @default(uuid())
+  created_at           DateTime @default(now())
+  updated_at           DateTime @updatedAt
+  last_balance_id      String   @unique
+  gold_weight          Decimal  @default(0)
+  cash_amount          Int      @default(0)
+  weight_995           Decimal  @default(0)
+  weight_999           Decimal  @default(0)
+  weight_9999          Decimal  @default(0)
+  advanced_gold_weight Decimal  @default(0)
+  advabced_cash_amount Int      @default(0)
+  unpaid_gold_weight   Decimal  @default(0)
+  unpaid_cash_amount   Int      @default(0)
+  last_balance         Balance  @relation("BalanceToBalance", fields: [last_balance_id], references: [id])
+  next_balance         Balance? @relation("BalanceToBalance")
+  entries              Entry[]
+
+  @@map("balances")
+}
+
+model Entry {
+  id                   String             @id @unique @default(uuid())
+  today_balance_id     String
+  in_request_id        String?
+  out_request_id       String?
+  repairing_request_id String?
+  store_id             String?
+  product_id           String?
+  note                 String
+  gold_amount          Decimal?
+  cash_amount          Int?
+  type                 entry_type
+  created_at           DateTime           @default(now())
+  updated_at           DateTime           @updatedAt
+  today_balance        Balance            @relation(fields: [today_balance_id], references: [id])
+  in_request           In_request?        @relation(fields: [in_request_id], references: [id])
+  out_request          Out_request?       @relation(fields: [out_request_id], references: [id])
+  repairing_request    Repairing_request? @relation(fields: [repairing_request_id], references: [id])
+  store                Store?             @relation(fields: [store_id], references: [id])
+  product              Product?           @relation(fields: [product_id], references: [id])
+
+  @@map("entries")
+}
+
+enum entry_type {
+  receiving
+  paying
+  inComing
+  outGoing
+}
+
+model Store {
+  id                   String        @id @unique @default(uuid())
+  created_at           DateTime      @default(now())
+  updated_at           DateTime      @updatedAt
+  name                 String
+  gold_amount          Decimal       @default(0)
+  address              String?
+  type                 store_type
+  note                 String?
+  unpaid_gold_weight   Decimal       @default(0)
+  unpaid_cash_amount   Int           @default(0)
+  advanced_gold_weight Decimal       @default(0)
+  advanced_cash_amount Int           @default(0)
+  entries              Entry[]
+  products             Product[]
+  in_requests          In_request[]
+  out_requests         Out_request[]
+
+  @@map("stores")
+}
+
+enum store_type {
+  retail
+  wholesale
+  factory
+}
+
+model Product {
+  id                  String        @id @unique @default(uuid())
+  created_at          DateTime      @default(now())
+  updated_at          DateTime      @updatedAt
+  serial              String        @unique
+  name                String
+  gold_weight         Decimal       @default(0)
+  sell_labor_cost     Int?
+  purchase_labor_cost Int?
+  catalog_id          String?
+  type                product_type
+  store_id            String?
+  note                String
+  isStokced           Boolean       @default(true)
+  stocked_at          DateTime      @default(now())
+  isOut               Boolean       @default(false)
+  out_at              DateTime?
+  isRented            Boolean       @default(false)
+  rented_at           DateTime?
+  catalog             Catalog?      @relation(fields: [catalog_id], references: [id])
+  store               Store?        @relation(fields: [store_id], references: [id])
+  in_requests         In_request[]
+  out_request         Out_request[]
+  Entry               Entry[]
+
+  @@map("products")
+}
+
+enum product_type {
+  other
+  k_10
+  k_14
+  k_18
+  k_24
+  percent_995
+  percent_999
+  percent_9999
+}
+
+model Catalog {
+  id                          String        @id @unique @default(uuid())
+  created_at                  DateTime      @default(now())
+  updated_at                  DateTime      @updatedAt
+  name                        String
+  photo_url                   String?
+  serial                      String        @unique
+  gold_weight                 Decimal       @default(0)
+  sell_labor_cost             Int?
+  purchase_labor_cost         Int?
+  average_stocked_gold_weight Decimal       @default(0)
+  note                        String
+  products                    Product[]
+  In_request                  In_request[]
+  Out_request                 Out_request[]
+
+  @@map("catalogs")
+}
+
+model In_request {
+  id                  String        @id @default(uuid())
+  created_at          DateTime      @default(now())
+  updated_at          DateTime?
+  serial              String        @unique
+  product_id          String?
+  store_id            String?
+  catalog_id          String?
+  payment_gold_weight Decimal       @default(0)
+  payment_cash_amount Int           @default(0)
+  state               request_state
+  isPaid              Boolean       @default(false)
+  paid_at             DateTime?
+  note                String
+  store               Store?        @relation(fields: [store_id], references: [id])
+  product             Product?      @relation(fields: [product_id], references: [id])
+  catalog             Catalog?      @relation(fields: [catalog_id], references: [id])
+  Entry               Entry[]
+
+  @@map("in_requests")
+}
+
+model Out_request {
+  id                  String        @id @default(uuid())
+  created_at          DateTime      @default(now())
+  updated_at          DateTime?
+  serial              String        @unique
+  store_id            String?
+  product_id          String?
+  catalog_id          String?
+  payment_gold_weight Decimal       @default(0)
+  payment_cash_amount Int           @default(0)
+  state               request_state
+  isPaid              Boolean       @default(false)
+  paid_at             DateTime?
+  note                String
+  product             Product?      @relation(fields: [product_id], references: [id])
+  catalog             Catalog?      @relation(fields: [catalog_id], references: [id])
+  store               Store?        @relation(fields: [store_id], references: [id])
+  Entry               Entry[]
+
+  @@map("out_requests")
+}
+
+enum request_state {
+  registered
+  preparing
+  finished
+}
+
+model Repairing_request {
+  id                  String        @id @default(uuid())
+  serial              String        @unique
+  state               request_state
+  payment_gold_weight Decimal       @default(0)
+  payment_cash_amount Int           @default(0)
+  isPaid              Boolean       @default(false)
+  paid_at             DateTime?
+  Entry               Entry[]
+
+  @@map("repairing_requests")
+}
+
+model Admin {
+  id          String         @id @default(uuid())
+  name        String         @unique
+  password    String         @unique
+  authority   authority_type
+  change_logs Change_log[]
+
+  @@map("admins")
+}
+
+enum authority_type {
+  super
+  admin
+  user
+}
+
+model Change_log {
+  id           BigInt   @id @default(autoincrement())
+  table_name   String
+  entity_id    String
+  action_type  String
+  changed_data String?
+  changed_by   String
+  changed_at   DateTime @default(now())
+  admin        Admin    @relation(fields: [changed_by], references: [id])
+
+  @@map("change_logs")
+}
