@@ -14,48 +14,90 @@ datasource db {
 }
 
 model Balance {
-  id                   String   @id @unique @default(uuid())
-  created_at           DateTime @default(now())
-  updated_at           DateTime @updatedAt
-  last_balance_id      String   @unique
-  gold_weight          Decimal  @default(0)
-  cash_amount          Int      @default(0)
-  weight_995           Decimal  @default(0)
-  weight_999           Decimal  @default(0)
-  weight_9999          Decimal  @default(0)
-  advanced_gold_weight Decimal  @default(0)
-  advabced_cash_amount Int      @default(0)
-  unpaid_gold_weight   Decimal  @default(0)
-  unpaid_cash_amount   Int      @default(0)
-  last_balance         Balance  @relation("BalanceToBalance", fields: [last_balance_id], references: [id])
-  next_balance         Balance? @relation("BalanceToBalance")
-  entries              Entry[]
+  id                    String   @id @unique @default(uuid())
+  created_at            DateTime @default(now())
+  updated_at            DateTime @updatedAt
+  last_balance_id       String?  @unique
+  gold_weight           Decimal  @default(0)
+  cash_amount           Int      @default(0)
+  bill_million_count    Int      @default(0)
+  bill_100k_count       Int      @default(0)
+  bill_50k_count        Int      @default(0)
+  bill_10k_count        Int      @default(0)
+  bill_5k_count         Int      @default(0)
+  bill_1k_count         Int      @default(0)
+  bill_500_count        Int      @default(0)
+  bill_100_count        Int      @default(0)
+  bill_50_count         Int      @default(0)
+  bill_10_count         Int      @default(0)
+  retail_999_weight     Decimal  @default(0)
+  retail_9999_weight    Decimal  @default(0)
+  factory_995_weight    Decimal  @default(0)
+  factory_999_weight    Decimal  @default(0)
+  factory_9999_weight   Decimal  @default(0)
+  old_pure_gold_weight  Decimal  @default(0)
+  old_mixed_gold_weight Decimal  @default(0)
+  product_gold_weight   Decimal  @default(0)
+  advanced_gold_weight  Decimal  @default(0)
+  advanced_cash_amount  Int      @default(0)
+  unpaid_gold_weight    Decimal  @default(0)
+  unpaid_cash_amount    Int      @default(0)
+  lend_gold_weight      Decimal  @default(0)
+  borrow_gold_weight    Decimal  @default(0)
+  last_balance          Balance? @relation("BalanceToBalance", fields: [last_balance_id], references: [id])
+  next_balance          Balance? @relation("BalanceToBalance")
+  entries               Entry[]
 
   @@map("balances")
 }
 
 model Entry {
-  id                   String             @id @unique @default(uuid())
+  id                   String            @id @unique @default(uuid())
   today_balance_id     String
   in_request_id        String?
   out_request_id       String?
   repairing_request_id String?
   store_id             String?
   product_id           String?
+  entry_code_id        Int
   note                 String
-  gold_amount          Decimal?
-  cash_amount          Int?
+  gold_995_weight      Decimal           @default(0)
+  gold_999_weight      Decimal           @default(0)
+  gold_9999_weight     Decimal           @default(0)
+  cash_amount          Int
+  bill_million_count   Int               @default(0)
+  bill_100k_count      Int               @default(0)
+  bill_50k_count       Int               @default(0)
+  bill_10k_count       Int               @default(0)
+  bill_5k_count        Int               @default(0)
+  bill_1k_count        Int               @default(0)
+  bill_500_count       Int               @default(0)
+  bill_100_count       Int               @default(0)
+  bill_50_count        Int               @default(0)
+  bill_10_count        Int               @default(0)
   type                 entry_type
-  created_at           DateTime           @default(now())
-  updated_at           DateTime           @updatedAt
-  today_balance        Balance            @relation(fields: [today_balance_id], references: [id])
-  in_request           In_request?        @relation(fields: [in_request_id], references: [id])
-  out_request          Out_request?       @relation(fields: [out_request_id], references: [id])
-  repairing_request    Repairing_request? @relation(fields: [repairing_request_id], references: [id])
-  store                Store?             @relation(fields: [store_id], references: [id])
-  product              Product?           @relation(fields: [product_id], references: [id])
+  created_at           DateTime          @default(now())
+  updated_at           DateTime          @updatedAt
+  today_balance        Balance           @relation(fields: [today_balance_id], references: [id])
+  in_request           InRequest?        @relation(fields: [in_request_id], references: [id])
+  out_request          OutRequest?       @relation(fields: [out_request_id], references: [id])
+  repairing_request    RepairingRequest? @relation(fields: [repairing_request_id], references: [id])
+  store                Store?            @relation(fields: [store_id], references: [id])
+  product              Product?          @relation(fields: [product_id], references: [id])
+  entry_code           EntryCode         @relation(fields: [entry_code_id], references: [id])
 
   @@map("entries")
+}
+
+model EntryCode {
+  id         Int      @id @unique @default(autoincrement())
+  code       Int      @unique
+  name       String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  Entry      Entry[]
+
+  @@map("entry_codes")
 }
 
 enum entry_type {
@@ -66,22 +108,22 @@ enum entry_type {
 }
 
 model Store {
-  id                   String        @id @unique @default(uuid())
-  created_at           DateTime      @default(now())
-  updated_at           DateTime      @updatedAt
+  id                   String       @id @unique @default(uuid())
+  created_at           DateTime     @default(now())
+  updated_at           DateTime     @updatedAt
   name                 String
-  gold_amount          Decimal       @default(0)
+  gold_amount          Decimal      @default(0)
   address              String?
   type                 store_type
   note                 String?
-  unpaid_gold_weight   Decimal       @default(0)
-  unpaid_cash_amount   Int           @default(0)
-  advanced_gold_weight Decimal       @default(0)
-  advanced_cash_amount Int           @default(0)
+  unpaid_gold_weight   Decimal      @default(0)
+  unpaid_cash_amount   Int          @default(0)
+  advanced_gold_weight Decimal      @default(0)
+  advanced_cash_amount Int          @default(0)
   entries              Entry[]
   products             Product[]
-  in_requests          In_request[]
-  out_requests         Out_request[]
+  in_requests          InRequest[]
+  out_requests         OutRequest[]
 
   @@map("stores")
 }
@@ -93,28 +135,28 @@ enum store_type {
 }
 
 model Product {
-  id                  String        @id @unique @default(uuid())
-  created_at          DateTime      @default(now())
-  updated_at          DateTime      @updatedAt
-  serial              String        @unique
+  id                  String       @id @unique @default(uuid())
+  created_at          DateTime     @default(now())
+  updated_at          DateTime     @updatedAt
+  serial              String       @unique
   name                String
-  gold_weight         Decimal       @default(0)
+  gold_weight         Decimal      @default(0)
   sell_labor_cost     Int?
   purchase_labor_cost Int?
   catalog_id          String?
   type                product_type
   store_id            String?
   note                String
-  isStokced           Boolean       @default(true)
-  stocked_at          DateTime      @default(now())
-  isOut               Boolean       @default(false)
+  isStokced           Boolean      @default(true)
+  stocked_at          DateTime     @default(now())
+  isOut               Boolean      @default(false)
   out_at              DateTime?
-  isRented            Boolean       @default(false)
+  isRented            Boolean      @default(false)
   rented_at           DateTime?
-  catalog             Catalog?      @relation(fields: [catalog_id], references: [id])
-  store               Store?        @relation(fields: [store_id], references: [id])
-  in_requests         In_request[]
-  out_request         Out_request[]
+  catalog             Catalog?     @relation(fields: [catalog_id], references: [id])
+  store               Store?       @relation(fields: [store_id], references: [id])
+  in_requests         InRequest[]
+  out_request         OutRequest[]
   Entry               Entry[]
 
   @@map("products")
@@ -132,64 +174,76 @@ enum product_type {
 }
 
 model Catalog {
-  id                          String        @id @unique @default(uuid())
-  created_at                  DateTime      @default(now())
-  updated_at                  DateTime      @updatedAt
+  id                          String       @id @unique @default(uuid())
+  created_at                  DateTime     @default(now())
+  updated_at                  DateTime     @updatedAt
   name                        String
   photo_url                   String?
-  serial                      String        @unique
-  gold_weight                 Decimal       @default(0)
+  serial                      String       @unique
+  gold_weight                 Decimal      @default(0)
   sell_labor_cost             Int?
   purchase_labor_cost         Int?
-  average_stocked_gold_weight Decimal       @default(0)
+  average_stocked_gold_weight Decimal      @default(0)
   note                        String
   products                    Product[]
-  In_request                  In_request[]
-  Out_request                 Out_request[]
+  In_request                  InRequest[]
+  Out_request                 OutRequest[]
 
   @@map("catalogs")
 }
 
-model In_request {
-  id                  String        @id @default(uuid())
-  created_at          DateTime      @default(now())
-  updated_at          DateTime?
-  serial              String        @unique
-  product_id          String?
-  store_id            String?
-  catalog_id          String?
-  payment_gold_weight Decimal       @default(0)
-  payment_cash_amount Int           @default(0)
-  state               request_state
-  isPaid              Boolean       @default(false)
-  paid_at             DateTime?
-  note                String
-  store               Store?        @relation(fields: [store_id], references: [id])
-  product             Product?      @relation(fields: [product_id], references: [id])
-  catalog             Catalog?      @relation(fields: [catalog_id], references: [id])
-  Entry               Entry[]
+model InRequest {
+  id                   String        @id @default(uuid())
+  created_at           DateTime      @default(now())
+  updated_at           DateTime?
+  serial               String        @unique
+  product_id           String?
+  store_id             String?
+  catalog_id           String?
+  payment_995_weight   Decimal       @default(0)
+  payment_999_weight   Decimal       @default(0)
+  payment_9999_weight  Decimal       @default(0)
+  payment_cash_amount  Int           @default(0)
+  unpaid_gold_weight   Decimal       @default(0)
+  unpaid_cash_amount   Int           @default(0)
+  advanced_gold_weight Decimal       @default(0)
+  advanced_cash_amount Int           @default(0)
+  state                request_state
+  isPaid               Boolean       @default(false)
+  paid_at              DateTime?
+  note                 String
+  store                Store?        @relation(fields: [store_id], references: [id])
+  product              Product?      @relation(fields: [product_id], references: [id])
+  catalog              Catalog?      @relation(fields: [catalog_id], references: [id])
+  Entry                Entry[]
 
   @@map("in_requests")
 }
 
-model Out_request {
-  id                  String        @id @default(uuid())
-  created_at          DateTime      @default(now())
-  updated_at          DateTime?
-  serial              String        @unique
-  store_id            String?
-  product_id          String?
-  catalog_id          String?
-  payment_gold_weight Decimal       @default(0)
-  payment_cash_amount Int           @default(0)
-  state               request_state
-  isPaid              Boolean       @default(false)
-  paid_at             DateTime?
-  note                String
-  product             Product?      @relation(fields: [product_id], references: [id])
-  catalog             Catalog?      @relation(fields: [catalog_id], references: [id])
-  store               Store?        @relation(fields: [store_id], references: [id])
-  Entry               Entry[]
+model OutRequest {
+  id                   String        @id @default(uuid())
+  created_at           DateTime      @default(now())
+  updated_at           DateTime?
+  serial               String        @unique
+  store_id             String?
+  product_id           String?
+  catalog_id           String?
+  payment_995_weight   Decimal       @default(0)
+  payment_999_weight   Decimal       @default(0)
+  payment_9999_weight  Decimal       @default(0)
+  payment_cash_amount  Int           @default(0)
+  unpaid_gold_weight   Decimal       @default(0)
+  unpaid_cash_amount   Int           @default(0)
+  advanced_gold_weight Decimal       @default(0)
+  advanced_cash_amount Int           @default(0)
+  state                request_state
+  isPaid               Boolean       @default(false)
+  paid_at              DateTime?
+  note                 String
+  product              Product?      @relation(fields: [product_id], references: [id])
+  catalog              Catalog?      @relation(fields: [catalog_id], references: [id])
+  store                Store?        @relation(fields: [store_id], references: [id])
+  Entry                Entry[]
 
   @@map("out_requests")
 }
@@ -200,7 +254,7 @@ enum request_state {
   finished
 }
 
-model Repairing_request {
+model RepairingRequest {
   id                  String        @id @default(uuid())
   serial              String        @unique
   state               request_state
@@ -218,7 +272,7 @@ model Admin {
   name        String         @unique
   password    String         @unique
   authority   authority_type
-  change_logs Change_log[]
+  change_logs ChangeLog[]
 
   @@map("admins")
 }
@@ -229,7 +283,7 @@ enum authority_type {
   user
 }
 
-model Change_log {
+model ChangeLog {
   id           BigInt   @id @default(autoincrement())
   table_name   String
   entity_id    String

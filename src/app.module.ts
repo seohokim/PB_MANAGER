@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { EntriesService } from './entries/entries.service';
-import { EntriesController } from './entries/entries.controller';
+import { EntryService } from './entries/entries.service';
+import { EntryController } from './entries/entries.controller';
 import { EntriesModule } from './entries/entries.module';
 import { StoresService } from './stores/stores.service';
 import { StoresController } from './stores/stores.controller';
@@ -20,10 +20,10 @@ import { RepairingRequestsModule } from './repairing_requests/repairing_requests
 import { AdminsService } from './admins/admins.service';
 import { AdminsController } from './admins/admins.controller';
 import { AdminsModule } from './admins/admins.module';
-import { PrismaModule } from './prisma/prisma.module';
 import { BalanceModule } from 'src/balances/balances.module';
 import { BalanceController } from 'src/balances/balances.controller';
 import { BalanceService } from 'src/balances/balances.service';
+import { PrismaModule } from 'src/prisma/prisma.module';
 
 @Module({
 	imports: [
@@ -41,7 +41,7 @@ import { BalanceService } from 'src/balances/balances.service';
 	controllers: [
 		AppController,
 		BalanceController,
-		EntriesController,
+		EntryController,
 		StoresController,
 		CatalogController,
 		InRequestsController,
@@ -51,7 +51,7 @@ import { BalanceService } from 'src/balances/balances.service';
 	providers: [
 		AppService,
 		BalanceService,
-		EntriesService,
+		EntryService,
 		StoresService,
 		InRequestsService,
 		RepairingRequestsService,
