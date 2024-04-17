@@ -5,7 +5,6 @@ import { testBalance, testBalanceDTO } from 'src/__test__/testBalance';
 
 import { BalanceController } from 'src/balances/balances.controller';
 import { BalanceService } from 'src/balances/balances.service';
-import { BalanceDTO } from 'src/balances/dtos/balance.dto';
 import {
 	GetBalanceByDateRangeOutputDto,
 	GetLatestBalanceOutputDto,

@@ -3,7 +3,6 @@ import { IsNotEmpty } from 'class-validator';
 import { IsDateDDMMYYYY } from 'src/common/decorators/date.decorator';
 import { CoreOutputDto } from 'src/common/core/dtos/core.dto';
 
-import { BalanceDTO } from 'src/balances/dtos/balance.dto';
 import { Balance } from '@prisma/client';
 
 export class GetLatestBalanceOutputDto extends CoreOutputDto {
