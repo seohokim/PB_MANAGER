@@ -12,6 +12,7 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 model Balance {
   id                    String   @id @unique @default(uuid())
   created_at            DateTime @default(now())
@@ -88,19 +89,20 @@ model Entry {
   @@map("entries")
 }
 
-
 enum entry_type {
   receiving
   paying
   inComing
   outGoing
 }
+
 model EntryCode {
-  id         Int      @id @unique @default(autoincrement())
-  code       Int      @unique
-  name       String   @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  id         Int        @id @unique @default(autoincrement())
+  code       Int        @unique
+  name       String     @unique
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  type       entry_type
   Entry      Entry[]
 
   @@map("entry_codes")
