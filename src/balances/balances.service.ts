@@ -3,33 +3,37 @@ import {
 	GetBalanceByDateRangeInputDto,
 	GetBalanceByDateRangeOutputDto,
 	GetLatestBalanceOutputDto,
-} from 'src/balances/dtos/get/get-balance.dto';
+} from 'src/balances/dtos/get-balance.dto';
 import {
 	CreateBalanceOutputDto,
 	CreateInitialBalanceInputDto,
-} from 'src/balances/dtos/post/post-balance.dto';
+} from 'src/balances/dtos/post-balance.dto';
 import {
 	generateErrorResponse,
 	generateOkResponse,
 } from 'src/common/utils/response.util';
-import parseFloatPrisma from 'src/prisma/extends/parseFloat';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class BalanceService {
+	constructor(private readonly prismaService: PrismaService) {}
+
 	async findLatestBalance() {
 		try {
-			const result = await parseFloatPrisma.balance.findFirst({
+			const result = await this.prismaService.balance.findFirst({
 				orderBy: {
 					created_at: 'desc',
 				},
 			});
+
 			return generateOkResponse<GetLatestBalanceOutputDto>({
-				data: result.convertWeights,
+				data: result,
 			});
 		} catch (error) {
 			if (error instanceof HttpException) {
 				throw error;
 			}
+			console.log(error.message);
 			throw generateErrorResponse(
 				'Internal Server Error',
 				HttpStatus.INTERNAL_SERVER_ERROR,
@@ -44,7 +48,7 @@ export class BalanceService {
 			endDateObj.setHours(23, 59, 59);
 			const realEndDate = endDateObj.toISOString();
 
-			const result = await parseFloatPrisma.balance.findMany({
+			const result = await this.prismaService.balance.findMany({
 				where: {
 					created_at: {
 						gte: convertToKST(startDate),
@@ -57,7 +61,7 @@ export class BalanceService {
 			});
 
 			return generateOkResponse<GetBalanceByDateRangeOutputDto>({
-				data: result.map((balance) => balance.convertWeights),
+				data: result,
 			});
 		} catch (error) {
 			if (error instanceof HttpException) {
@@ -72,7 +76,7 @@ export class BalanceService {
 
 	async initBalance(body: CreateInitialBalanceInputDto) {
 		try {
-			await parseFloatPrisma.balance.create({
+			const result = await this.prismaService.balance.create({
 				data: {
 					bill_million_count: body.bill_million_count,
 					bill_100k_count: body.bill_100k_count,
@@ -93,7 +97,11 @@ export class BalanceService {
 					old_mixed_gold_weight: body.old_mixed_gold_weight,
 				},
 			});
-			return generateOkResponse<CreateBalanceOutputDto>();
+			return generateOkResponse<CreateBalanceOutputDto>({
+				data: {
+					id: result.id,
+				},
+			});
 		} catch (error) {
 			if (error instanceof HttpException) {
 				throw error;
@@ -107,7 +115,7 @@ export class BalanceService {
 
 	async createBalance() {
 		try {
-			const lastBalance = await parseFloatPrisma.balance.findFirst({
+			const lastBalance = await this.prismaService.balance.findFirst({
 				orderBy: {
 					created_at: 'desc',
 				},
@@ -121,7 +129,7 @@ export class BalanceService {
 				lastBalanceDate.setHours(lastBalanceDate.getHours() + 9);
 
 				if (lastBalanceDate.getDate() !== today.getDate()) {
-					await parseFloatPrisma.balance.create({
+					const result = await this.prismaService.balance.create({
 						data: {
 							last_balance_id: lastBalance.id,
 							bill_million_count: lastBalance.bill_million_count,
@@ -148,13 +156,17 @@ export class BalanceService {
 								lastBalance.product_gold_weight,
 						},
 					});
+					return generateOkResponse<CreateBalanceOutputDto>({
+						data: {
+							id: result.id,
+						},
+					});
 				} else {
 					throw generateErrorResponse(
 						'already created today',
 						HttpStatus.UNPROCESSABLE_ENTITY,
 					);
 				}
-				return generateOkResponse<CreateBalanceOutputDto>();
 			}
 			throw generateErrorResponse(
 				'no balance',
@@ -175,9 +187,12 @@ export class BalanceService {
 
 function convertToKST(date: string): string {
 	const dateRegex = /^(\d{2})-(\d{2})-(\d{4})$/;
-	if (!dateRegex.test(date)) return null;
+	const match = date.match(dateRegex);
+	if (!match) {
+		return '';
+	}
 
-	const [_, day, month, year] = date.match(dateRegex);
+	const [_, day, month, year] = match || [];
 	// date is KST but DB Date is UTC
 	const dateObj = new Date(`${year}-${month}-${day}`);
 	dateObj.setHours(dateObj.getHours() - 9);

@@ -71,4 +71,9 @@ export class CreateInitialBalanceInputDto {
 	old_mixed_gold_weight: number;
 }
 
-export class CreateBalanceOutputDto extends CoreOutputDto {}
+export class CreateBalanceOutputDto extends CoreOutputDto {
+	@IsNotEmpty()
+	data: {
+		id: string;
+	};
+}

@@ -16,11 +16,11 @@ import {
 	GetBalanceByDateRangeInputDto,
 	GetBalanceByDateRangeOutputDto,
 	GetLatestBalanceOutputDto,
-} from 'src/balances/dtos/get/get-balance.dto';
+} from 'src/balances/dtos/get-balance.dto';
 import {
 	CreateBalanceOutputDto,
 	CreateInitialBalanceInputDto,
-} from 'src/balances/dtos/post/post-balance.dto';
+} from 'src/balances/dtos/post-balance.dto';
 
 @Controller('balance')
 export class BalanceController {
