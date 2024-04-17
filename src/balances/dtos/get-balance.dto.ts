@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsNotEmpty } from 'class-validator';
-import { IsDateDDMMYYYY } from 'src/common/decorators/date.decorator';
-import { CoreOutputDto } from 'src/common/core/dtos/core.dto';
 
 import { Balance } from '@prisma/client';
+import { IsDateDDMMYYYY } from '../../common/decorators/date.decorator';
+import { CoreOutputDto } from '../../common/core/dtos/core.dto';
 
 export class GetLatestBalanceOutputDto extends CoreOutputDto {
-	@ApiProperty({})
+	@ApiProperty()
 	data: Balance | null;
 }
 

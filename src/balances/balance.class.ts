@@ -1,7 +1,6 @@
 import { PickType } from '@nestjs/mapped-types';
 import { Balance } from '@prisma/client';
 import { Decimal } from '@prisma/client/runtime/library';
-import { IsNotEmpty } from 'class-validator';
 
 export class BalanceClass {
 	id: string;
