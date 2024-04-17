@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { EntryCodesController } from './entry_codes.controller';
 import { EntryCodesService } from 'src/entry_codes/entry_codes.service';
 import { testEntryCodeDTO, testEntryCodes } from 'src/__test__/testEntrycode';
-import { generateOkResponse } from 'src/common/utils/response.util';
+
 import { GetAllEntryCodeOutputDto } from 'src/entry_codes/dtos/get-entry_code.dto';
 import {
 	CreateEntryCodeInputDto,
@@ -11,6 +11,7 @@ import {
 
 import { EntryCode } from '@prisma/client';
 import { SetEntryCodeObsoleteOutputDto } from 'src/entry_codes/dtos/patch-entry_code.dto';
+import { generateOkResponse } from 'src/common/utils/response.util';
 
 const mockEntryCodeService = {
 	findAll: jest.fn(),

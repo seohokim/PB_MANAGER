@@ -1,7 +1,7 @@
 import { Entry } from '@prisma/client';
-import { IsDateDDMMYYYY } from 'src/common/decorators/date.decorator';
 import { CoreOutputDto } from 'src/common/core/dtos/core.dto';
 import { IsNotEmpty } from 'class-validator';
+import { IsDateDDMMYYYY } from 'src/common/decorators/date.decorator';
 
 export class GetEntryByDateRangeInputDto {
 	@IsDateDDMMYYYY({

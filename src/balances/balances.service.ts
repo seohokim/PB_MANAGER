@@ -17,6 +17,7 @@ import {
 	generateErrorResponse,
 	generateOkResponse,
 } from 'src/common/utils/response.util';
+
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
@@ -66,9 +67,6 @@ export class BalanceService {
 				data: result,
 			});
 		} catch (error) {
-			if (error instanceof HttpException) {
-				throw error;
-			}
 			throw generateErrorResponse(error);
 		}
 	}
@@ -102,9 +100,6 @@ export class BalanceService {
 				},
 			});
 		} catch (error) {
-			if (error instanceof HttpException) {
-				throw error;
-			}
 			throw generateErrorResponse(error);
 		}
 	}
@@ -158,16 +153,12 @@ export class BalanceService {
 						},
 					});
 				} else {
-					throw generateErrorResponse(
-						new UnprocessableEntityException(
-							'already created today',
-						),
+					throw new UnprocessableEntityException(
+						'already created today',
 					);
 				}
 			}
-			throw generateErrorResponse(
-				new UnprocessableEntityException('no balance data found'),
-			);
+			throw new UnprocessableEntityException('no balance data found');
 		} catch (error) {
 			throw generateErrorResponse(error);
 		}

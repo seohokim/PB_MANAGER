@@ -1,8 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import {
-	generateErrorResponse,
-	generateOkResponse,
-} from 'src/common/utils/response.util';
+
 import { SetEntryCodeObsoleteOutputDto } from 'src/entry_codes/dtos/patch-entry_code.dto';
 import { GetAllEntryCodeOutputDto } from 'src/entry_codes/dtos/get-entry_code.dto';
 import {
@@ -10,6 +7,10 @@ import {
 	CreateEntryCodeOutputDto,
 } from 'src/entry_codes/dtos/post-entry_code.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import {
+	generateErrorResponse,
+	generateOkResponse,
+} from 'src/common/utils/response.util';
 
 @Injectable()
 export class EntryCodesService {

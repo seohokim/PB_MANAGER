@@ -11,12 +11,13 @@ import {
 	CreateEntryCodeInputDto,
 	CreateEntryCodeOutputDto,
 } from 'src/entry_codes/dtos/post-entry_code.dto';
+
+import { GetAllEntryCodeOutputDto } from 'src/entry_codes/dtos/get-entry_code.dto';
+import { SetEntryCodeObsoleteOutputDto } from 'src/entry_codes/dtos/patch-entry_code.dto';
 import {
 	generateErrorResponse,
 	generateOkResponse,
 } from 'src/common/utils/response.util';
-import { GetAllEntryCodeOutputDto } from 'src/entry_codes/dtos/get-entry_code.dto';
-import { SetEntryCodeObsoleteOutputDto } from 'src/entry_codes/dtos/patch-entry_code.dto';
 
 describe('EntryCodesService', () => {
 	let service: EntryCodesService;
