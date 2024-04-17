@@ -4,16 +4,17 @@ export function IsDateDDMMYYYY(validationOptions?: ValidationOptions) {
 	return function (object: unknown, propertyName: string) {
 		registerDecorator({
 			name: 'isDateDDMMYYYY',
-			target: object.constructor,
+			target: (object as Record<string, any>).constructor,
 			propertyName: propertyName,
 			constraints: [],
 			options: validationOptions,
 			validator: {
 				validate(value: string) {
 					const dateRegex = /^(\d{2})-(\d{2})-(\d{4})$/;
-					if (!dateRegex.test(value)) return false;
+					const match = value.match(dateRegex);
+					if (!match) return false;
 
-					const [_, day, month, year] = value.match(dateRegex);
+					const [_, day, month, year] = match;
 					const date = new Date(`${year}-${month}-${day}`);
 
 					return (
