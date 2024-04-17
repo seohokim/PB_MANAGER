@@ -25,6 +25,7 @@ export function generateErrorResponse(error: any): HttpException {
 	) {
 		return getPrismaFormattedError(error);
 	}
+
 	return new HttpException(
 		{
 			success: false,
@@ -32,6 +33,6 @@ export function generateErrorResponse(error: any): HttpException {
 				message: [error.message],
 			},
 		},
-		error.statusCode,
+		error.status,
 	);
 }
