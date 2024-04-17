@@ -24,6 +24,9 @@ import { BalanceModule } from 'src/balances/balances.module';
 import { BalanceController } from 'src/balances/balances.controller';
 import { BalanceService } from 'src/balances/balances.service';
 import { PrismaModule } from 'src/prisma/prisma.module';
+import { EntryCodesService } from './entry_codes/entry_codes.service';
+import { EntryCodesController } from './entry_codes/entry_codes.controller';
+import { EntryCodesModule } from './entry_codes/entry_codes.module';
 
 @Module({
 	imports: [
@@ -37,6 +40,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 		RepairingRequestsModule,
 		AdminsModule,
 		PrismaModule,
+		EntryCodesModule,
 	],
 	controllers: [
 		AppController,
@@ -47,6 +51,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 		InRequestsController,
 		RepairingRequestsController,
 		AdminsController,
+		EntryCodesController,
 	],
 	providers: [
 		AppService,
@@ -56,6 +61,7 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 		InRequestsService,
 		RepairingRequestsService,
 		AdminsService,
+		EntryCodesService,
 	],
 })
 export class AppModule {}
