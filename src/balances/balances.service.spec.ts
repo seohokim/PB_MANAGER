@@ -2,7 +2,11 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BalanceService } from './balances.service';
 import { PrismaService } from '../prisma/prisma.service';
 
-import { HttpException, HttpStatus } from '@nestjs/common';
+import {
+	HttpException,
+	HttpStatus,
+	UnprocessableEntityException,
+} from '@nestjs/common';
 import {
 	GetBalanceByDateRangeInputDto,
 	GetBalanceByDateRangeOutputDto,
@@ -78,10 +82,7 @@ describe('BalanceService', () => {
 			);
 
 			await expect(balanceService.findLatestBalance()).rejects.toThrow(
-				generateErrorResponse(
-					'Internal Server Error',
-					HttpStatus.INTERNAL_SERVER_ERROR,
-				),
+				generateErrorResponse(mockError),
 			);
 		});
 	});
@@ -123,12 +124,7 @@ describe('BalanceService', () => {
 
 			await expect(
 				balanceService.findByDateRange(mockQuery),
-			).rejects.toThrow(
-				generateErrorResponse(
-					'Internal Server Error',
-					HttpStatus.INTERNAL_SERVER_ERROR,
-				),
-			);
+			).rejects.toThrow(generateErrorResponse(mockError));
 		});
 	});
 
@@ -161,10 +157,7 @@ describe('BalanceService', () => {
 			);
 
 			await expect(balanceService.initBalance(mockBody)).rejects.toThrow(
-				generateErrorResponse(
-					'Internal Server Error',
-					HttpStatus.INTERNAL_SERVER_ERROR,
-				),
+				generateErrorResponse(mockError),
 			);
 		});
 	});
@@ -201,8 +194,7 @@ describe('BalanceService', () => {
 
 			await expect(balanceService.createBalance()).rejects.toThrow(
 				generateErrorResponse(
-					'already created today',
-					HttpStatus.UNPROCESSABLE_ENTITY,
+					new UnprocessableEntityException('already created today'),
 				),
 			);
 		});
@@ -214,8 +206,7 @@ describe('BalanceService', () => {
 
 			await expect(balanceService.createBalance()).rejects.toThrow(
 				generateErrorResponse(
-					'no balance',
-					HttpStatus.UNPROCESSABLE_ENTITY,
+					new UnprocessableEntityException('no balance data found'),
 				),
 			);
 		});
@@ -228,10 +219,7 @@ describe('BalanceService', () => {
 			);
 
 			await expect(balanceService.createBalance()).rejects.toThrow(
-				generateErrorResponse(
-					'Internal Server Error',
-					HttpStatus.INTERNAL_SERVER_ERROR,
-				),
+				generateErrorResponse(mockError),
 			);
 		});
 	});
