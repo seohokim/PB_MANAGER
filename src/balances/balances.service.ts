@@ -4,6 +4,7 @@ import {
 	Injectable,
 	UnprocessableEntityException,
 } from '@nestjs/common';
+
 import {
 	GetBalanceByDateRangeInputDto,
 	GetBalanceByDateRangeOutputDto,
@@ -17,7 +18,6 @@ import {
 	generateErrorResponse,
 	generateOkResponse,
 } from 'src/common/utils/response.util';
-
 import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()

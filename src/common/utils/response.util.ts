@@ -1,4 +1,5 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
+
 import { Prisma } from '@prisma/client';
 import { CoreOutputDto } from 'src/common/core/dtos/core.dto';
 import { getPrismaFormattedError } from 'src/common/utils/error.util';
@@ -34,3 +35,4 @@ export function generateErrorResponse(error: any): HttpException {
 		error.statusCode,
 	);
 }
+

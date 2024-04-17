@@ -89,22 +89,23 @@ model Entry {
   @@map("entries")
 }
 
-model EntryCode {
-  id         Int      @id @unique @default(autoincrement())
-  code       Int      @unique
-  name       String   @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  Entry      Entry[]
-
-  @@map("entry_codes")
-}
-
 enum entry_type {
   receiving
   paying
   inComing
   outGoing
+}
+
+model EntryCode {
+  id         Int        @id @unique @default(autoincrement())
+  code       Int        @unique
+  name       String     @unique
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+  type       entry_type
+  Entry      Entry[]
+
+  @@map("entry_codes")
 }
 
 model Store {
