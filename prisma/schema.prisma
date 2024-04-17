@@ -18,7 +18,7 @@ model Balance {
   created_at            DateTime @default(now())
   updated_at            DateTime @updatedAt
   last_balance_id       String?  @unique
-  gold_weight           Decimal  @default(0)
+  gold_weight           Decimal  @default(0) @db.Decimal(20, 2)
   cash_amount           Int      @default(0)
   bill_million_count    Int      @default(0)
   bill_100k_count       Int      @default(0)
@@ -30,20 +30,20 @@ model Balance {
   bill_100_count        Int      @default(0)
   bill_50_count         Int      @default(0)
   bill_10_count         Int      @default(0)
-  retail_999_weight     Decimal  @default(0)
-  retail_9999_weight    Decimal  @default(0)
-  factory_995_weight    Decimal  @default(0)
-  factory_999_weight    Decimal  @default(0)
-  factory_9999_weight   Decimal  @default(0)
-  old_pure_gold_weight  Decimal  @default(0)
-  old_mixed_gold_weight Decimal  @default(0)
-  product_gold_weight   Decimal  @default(0)
-  advanced_gold_weight  Decimal  @default(0)
+  retail_999_weight     Decimal  @default(0) @db.Decimal(20, 2)
+  retail_9999_weight    Decimal  @default(0) @db.Decimal(20, 2)
+  factory_995_weight    Decimal  @default(0) @db.Decimal(20, 2)
+  factory_999_weight    Decimal  @default(0) @db.Decimal(20, 2)
+  factory_9999_weight   Decimal  @default(0) @db.Decimal(20, 2)
+  old_pure_gold_weight  Decimal  @default(0) @db.Decimal(20, 2)
+  old_mixed_gold_weight Decimal  @default(0) @db.Decimal(20, 2)
+  product_gold_weight   Decimal  @default(0) @db.Decimal(20, 2)
+  advanced_gold_weight  Decimal  @default(0) @db.Decimal(20, 2)
   advanced_cash_amount  Int      @default(0)
-  unpaid_gold_weight    Decimal  @default(0)
+  unpaid_gold_weight    Decimal  @default(0) @db.Decimal(20, 2)
   unpaid_cash_amount    Int      @default(0)
-  lend_gold_weight      Decimal  @default(0)
-  borrow_gold_weight    Decimal  @default(0)
+  lend_gold_weight      Decimal  @default(0) @db.Decimal(20, 2)
+  borrow_gold_weight    Decimal  @default(0) @db.Decimal(20, 2)
   last_balance          Balance? @relation("BalanceToBalance", fields: [last_balance_id], references: [id])
   next_balance          Balance? @relation("BalanceToBalance")
   entries               Entry[]
@@ -60,10 +60,11 @@ model Entry {
   store_id             String?
   product_id           String?
   entry_code_id        Int
+  entry_subject_id     String
   note                 String
-  gold_995_weight      Decimal           @default(0)
-  gold_999_weight      Decimal           @default(0)
-  gold_9999_weight     Decimal           @default(0)
+  gold_995_weight      Decimal           @default(0) @db.Decimal(20, 2)
+  gold_999_weight      Decimal           @default(0) @db.Decimal(20, 2)
+  gold_9999_weight     Decimal           @default(0) @db.Decimal(20, 2)
   cash_amount          Int
   bill_million_count   Int               @default(0)
   bill_100k_count      Int               @default(0)
@@ -85,6 +86,7 @@ model Entry {
   store                Store?            @relation(fields: [store_id], references: [id])
   product              Product?          @relation(fields: [product_id], references: [id])
   entry_code           EntryCode         @relation(fields: [entry_code_id], references: [id])
+  entry_subject        EntrySubject      @relation(fields: [entry_subject_id], references: [id])
 
   @@map("entries")
 }
@@ -98,8 +100,8 @@ enum entry_type {
 
 model EntryCode {
   id         Int        @id @unique @default(autoincrement())
-  code       Int        @unique
-  name       String     @unique
+  code       String     @unique
+  name       String     @unique 
   created_at DateTime   @default(now())
   updated_at DateTime   @updatedAt
   type       entry_type
@@ -109,18 +111,30 @@ model EntryCode {
   @@map("entry_codes")
 }
 
+model EntrySubject {
+  id         String   @id @unique @default(uuid())
+  code       String   @unique
+  name       String   @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  Entry Entry[]
+
+  @@map("entry_subjects")
+}
+
 model Store {
   id                   String       @id @unique @default(uuid())
   created_at           DateTime     @default(now())
   updated_at           DateTime     @updatedAt
   name                 String
-  gold_amount          Decimal      @default(0)
+  gold_amount          Decimal      @default(0) @db.Decimal(20, 2)
   address              String?
   type                 store_type
   note                 String?
-  unpaid_gold_weight   Decimal      @default(0)
+  unpaid_gold_weight   Decimal      @default(0) @db.Decimal(20, 2)
   unpaid_cash_amount   Int          @default(0)
-  advanced_gold_weight Decimal      @default(0)
+  advanced_gold_weight Decimal      @default(0) @db.Decimal(20, 2)
   advanced_cash_amount Int          @default(0)
   entries              Entry[]
   products             Product[]
@@ -142,7 +156,7 @@ model Product {
   updated_at          DateTime     @updatedAt
   serial              String       @unique
   name                String
-  gold_weight         Decimal      @default(0)
+  gold_weight         Decimal      @default(0) @db.Decimal(20, 2)
   sell_labor_cost     Int?
   purchase_labor_cost Int?
   catalog_id          String?
@@ -182,10 +196,10 @@ model Catalog {
   name                        String
   photo_url                   String?
   serial                      String       @unique
-  gold_weight                 Decimal      @default(0)
+  gold_weight                 Decimal      @default(0) @db.Decimal(20, 2)
   sell_labor_cost             Int?
   purchase_labor_cost         Int?
-  average_stocked_gold_weight Decimal      @default(0)
+  average_stocked_gold_weight Decimal      @default(0) @db.Decimal(20, 2)
   note                        String
   products                    Product[]
   In_request                  InRequest[]
@@ -202,13 +216,13 @@ model InRequest {
   product_id           String?
   store_id             String?
   catalog_id           String?
-  payment_995_weight   Decimal       @default(0)
-  payment_999_weight   Decimal       @default(0)
-  payment_9999_weight  Decimal       @default(0)
+  payment_995_weight   Decimal       @default(0) @db.Decimal(20, 2)
+  payment_999_weight   Decimal       @default(0) @db.Decimal(20, 2)
+  payment_9999_weight  Decimal       @default(0) @db.Decimal(20, 2)
   payment_cash_amount  Int           @default(0)
-  unpaid_gold_weight   Decimal       @default(0)
+  unpaid_gold_weight   Decimal       @default(0) @db.Decimal(20, 2)
   unpaid_cash_amount   Int           @default(0)
-  advanced_gold_weight Decimal       @default(0)
+  advanced_gold_weight Decimal       @default(0) @db.Decimal(20, 2)
   advanced_cash_amount Int           @default(0)
   state                request_state
   isPaid               Boolean       @default(false)
@@ -230,13 +244,13 @@ model OutRequest {
   store_id             String?
   product_id           String?
   catalog_id           String?
-  payment_995_weight   Decimal       @default(0)
-  payment_999_weight   Decimal       @default(0)
-  payment_9999_weight  Decimal       @default(0)
+  payment_995_weight   Decimal       @default(0) @db.Decimal(20, 2)
+  payment_999_weight   Decimal       @default(0) @db.Decimal(20, 2)
+  payment_9999_weight  Decimal       @default(0) @db.Decimal(20, 2)
   payment_cash_amount  Int           @default(0)
-  unpaid_gold_weight   Decimal       @default(0)
+  unpaid_gold_weight   Decimal       @default(0) @db.Decimal(20, 2)
   unpaid_cash_amount   Int           @default(0)
-  advanced_gold_weight Decimal       @default(0)
+  advanced_gold_weight Decimal       @default(0) @db.Decimal(20, 2)
   advanced_cash_amount Int           @default(0)
   state                request_state
   isPaid               Boolean       @default(false)
@@ -260,7 +274,7 @@ model RepairingRequest {
   id                  String        @id @default(uuid())
   serial              String        @unique
   state               request_state
-  payment_gold_weight Decimal       @default(0)
+  payment_gold_weight Decimal       @default(0) @db.Decimal(20, 2)
   payment_cash_amount Int           @default(0)
   isPaid              Boolean       @default(false)
   paid_at             DateTime?
