@@ -1,7 +1,7 @@
-import { PickType } from '@nestjs/mapped-types';
 import { $Enums, EntryCode } from '@prisma/client';
+
+import { CoreOutputDto } from '../../common/core/dtos/core.dto';
 import { IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { CoreOutputDto } from 'src/common/core/dtos/core.dto';
 
 export class CreateEntryCodeInputDto {
 	@IsNotEmpty()

@@ -104,6 +104,7 @@ model EntryCode {
   updated_at DateTime   @updatedAt
   type       entry_type
   Entry      Entry[]
+  isObsolete Boolean    @default(false)
 
   @@map("entry_codes")
 }
